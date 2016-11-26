@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SSHmaster</string>
+    <string name="menu_save">保存</string>
+</resources>
