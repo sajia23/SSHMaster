@@ -1,20 +1,23 @@
 package com.example.yuesh.sshmaster;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.content.SharedPreferences.Editor;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         {
             Log.d("debug", "不是第一次运行");
         }
+        shows();
 
     }
     public void open(View v)
@@ -67,10 +71,48 @@ public class MainActivity extends AppCompatActivity {
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 MainActivity.this,
                 R.layout.listview_layout,
-                cursor,new String[] {"host_name"},
-                new int[] {R.id.my_host_name},
+                cursor,new String[] {"host_name","host_username"},
+                new int[] {R.id.my_host_name,R.id.my_host_username},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
                 );
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
+                new AlertDialog.Builder(MainActivity.this)
+                .setTitle("对主机进行操作")
+                .setItems(new String[] {"连接","删除"},new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==1)
+                        {
+                            Intent intent = new Intent();
+                            intent.setClass(MainActivity.this,tee.class);
+                            startActivity(intent);
+                        }
+                    }
+                })
+                .show();
+            }
+
+
+        });
+
+
+
+
+
+    }
+    public void shows()
+    {
+        Cursor cursor = db.rawQuery("select * from hosts_table",null);
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                MainActivity.this,
+                R.layout.listview_layout,
+                cursor,new String[] {"host_name","host_username"},
+                new int[] {R.id.my_host_name,R.id.my_host_username},
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
         listView.setAdapter(adapter);
     }
 
