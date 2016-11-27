@@ -62,7 +62,7 @@ public class Add extends AppCompatActivity {
     }
     public void insertData(SQLiteDatabase db, String host_name, String host_port, String host_username, String host_userpasswd)
     {
-        db.execSQL("insert into hosts_table (_id,host_name,host_port,host_username,host_userpasswd) values("+nums+",'"+host_name+"','"+host_port+"','"+host_username+"','"+host_userpasswd+"')");
+        db.execSQL("insert into hosts_table (_id,host_name,host_port,host_username,host_userpasswd) values(null,'"+host_name+"','"+host_port+"','"+host_username+"','"+host_userpasswd+"')");
         nums ++;
     }
 }

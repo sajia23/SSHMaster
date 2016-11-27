@@ -17,7 +17,7 @@
 
     </ListView>
     <Button
-        android:text="Button"
+        android:text="创建"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/activity_main_button1"
@@ -27,7 +27,7 @@
         android:layout_marginBottom="18dp" />
 
     <Button
-        android:text="Button"
+        android:text="刷新"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="44dp"

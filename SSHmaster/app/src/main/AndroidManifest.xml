@@ -20,7 +20,13 @@
             android:name=".Add"
             android:label="编辑主机"
             android:theme="@style/AppTheme" />
-        <activity android:name=".tee"></activity>
+        <activity android:name=".Conn"
+            android:theme="@style/AppTheme"
+            >
+            <!--<intent-filter>-->
+                <!---->
+            <!--</intent-filter>-->
+        </activity>
     </application>
 
 </manifest>

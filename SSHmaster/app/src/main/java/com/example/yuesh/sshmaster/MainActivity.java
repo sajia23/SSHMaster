@@ -19,6 +19,10 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.content.SharedPreferences.Editor;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -65,31 +69,51 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(MainActivity.this,Add.class);
         startActivity(intent);
     }
-    public void show(View v)
+    public void show(View view)
     {
-        Cursor cursor = db.rawQuery("select * from hosts_table",null);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+        shows();
+    }
+    public void shows()
+    {
+        final Cursor cursor = db.rawQuery("select * from hosts_table",null);
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 MainActivity.this,
                 R.layout.listview_layout,
-                cursor,new String[] {"host_name","host_username"},
-                new int[] {R.id.my_host_name,R.id.my_host_username},
+                cursor,new String[] {"_id","host_name","host_username"},
+                new int[] {R.id.my_host_id,R.id.my_host_name,R.id.my_host_username},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
                 );
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id){
+
+                final String txt =((TextView)view.findViewById(R.id.my_host_name)).getText().toString();
                 new AlertDialog.Builder(MainActivity.this)
                 .setTitle("对主机进行操作")
                 .setItems(new String[] {"连接","删除"},new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         if(which==1)
                         {
+                            Toast.makeText(MainActivity.this, "已删除"+txt, Toast.LENGTH_LONG).show();
+                            db.execSQL("delete from hosts_table where host_name = "+"'"+txt+"'");
+                            shows();
+                        }
+                        else if(which == 0)
+                        {
                             Intent intent = new Intent();
-                            intent.setClass(MainActivity.this,tee.class);
+                            intent.setClass(MainActivity.this,Conn.class);
+                            intent.putExtra("host_name",txt);
                             startActivity(intent);
                         }
+                        else
+                        {
+                            Toast.makeText(MainActivity.this, "别瞎几把点", Toast.LENGTH_LONG).show();
+                        }
+
+
                     }
                 })
                 .show();
@@ -103,17 +127,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    public void shows()
-    {
-        Cursor cursor = db.rawQuery("select * from hosts_table",null);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                MainActivity.this,
-                R.layout.listview_layout,
-                cursor,new String[] {"host_name","host_username"},
-                new int[] {R.id.my_host_name,R.id.my_host_username},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-        );
-        listView.setAdapter(adapter);
-    }
+
 
 }
