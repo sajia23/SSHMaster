@@ -3,7 +3,6 @@ package com.example.yuesh.sshmaster;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +13,6 @@ import android.widget.Toast;
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.Session;
 import com.trilead.ssh2.StreamGobbler;
-
-import org.w3c.dom.Text;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +21,8 @@ import java.io.InputStreamReader;
 
 public class Conn extends AppCompatActivity {
     String host_name;
-    String host_username;
-    String host_userpasswd;
+    String username;
+    String userpasswd;
     Button connect;
     Button send;
     SQLiteDatabase db;
@@ -34,6 +30,7 @@ public class Conn extends AppCompatActivity {
     Session sess;
     EditText editText;
     TextView textView;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +46,30 @@ public class Conn extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.tee_editText);
         textView = (TextView) findViewById(R.id.tee_textview);
         send.setEnabled(false);
+        cursor = db.rawQuery("select * from hosts_table where host_name =?",new String[]{host_name});
+        if(cursor.moveToFirst())//Move the cursor to the first row. This method will return false if the cursor is empty.
+        {
+            username=cursor.getString(3);
+            userpasswd=cursor.getString(4);
+
+        }
+        cursor.close();
+        Toast.makeText(Conn.this, username, Toast.LENGTH_LONG).show();
+        Toast.makeText(Conn.this, userpasswd, Toast.LENGTH_LONG).show();
     }
     public void connect(View view) throws IOException {
-        Cursor cursor = db.rawQuery("select from hosts_table where"+"'"+host_name+"'",null);
-        host_username = cursor.getString(3);
-        host_userpasswd = cursor.getString(4);
+
         if(connect.getText().toString()=="连接")
         {
             conn.connect();
-            boolean isAuthenticated = conn.authenticateWithPassword(host_username, host_userpasswd);
+            Toast.makeText(Conn.this, ".connect执行完毕", Toast.LENGTH_LONG).show();
+            boolean isAuthenticated = conn.authenticateWithPassword(username, userpasswd);
             if (isAuthenticated == false)
                 throw new IOException("Authentication failed.");
 
             else
             {
+                Toast.makeText(Conn.this, "keyi", Toast.LENGTH_LONG).show();
                 sess = conn.openSession();
                 connect.setText("断开");
                 textView.setText("已连接");

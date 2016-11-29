@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +21,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
 
 public class MainActivity extends AppCompatActivity {
     private static String create = "已创建";
@@ -32,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     SQLiteDatabase db;
     SharedPreferences sharedPreferences;
+    Cursor cursor;
+    SimpleCursorAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -60,73 +59,74 @@ public class MainActivity extends AppCompatActivity {
         {
             Log.d("debug", "不是第一次运行");
         }
-        shows();
+
+
+        hexin();
+        setOnListView();
+        setOnClickListView();
 
     }
-    public void open(View v)
+    public void open(View v)//开启主机连接界面
     {
         Intent intent = new Intent();
         intent.setClass(MainActivity.this,Add.class);
         startActivity(intent);
     }
-    public void show(View view)
+    public void show(View view)//刷新按钮
     {
-        shows();
+        setOnListView();
+        setOnClickListView();
     }
-    public void shows()
+    public void hexin()
     {
-        final Cursor cursor = db.rawQuery("select * from hosts_table",null);
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+        cursor = db.rawQuery("select * from hosts_table",null);
+        adapter = new SimpleCursorAdapter(
                 MainActivity.this,
                 R.layout.listview_layout,
                 cursor,new String[] {"_id","host_name","host_username"},
                 new int[] {R.id.my_host_id,R.id.my_host_name,R.id.my_host_username},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-                );
+        );
+    }
+    public void setOnListView()//列表展示函数
+    {
+        hexin();
         listView.setAdapter(adapter);
+    }
+    public void setOnClickListView()//列表点击事件函数
+    {
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id){
 
                 final String txt =((TextView)view.findViewById(R.id.my_host_name)).getText().toString();
                 new AlertDialog.Builder(MainActivity.this)
-                .setTitle("对主机进行操作")
-                .setItems(new String[] {"连接","删除"},new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        .setTitle("对主机进行操作")
+                        .setItems(new String[] {"连接","删除"},new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                        if(which==1)
-                        {
-                            Toast.makeText(MainActivity.this, "已删除"+txt, Toast.LENGTH_LONG).show();
-                            db.execSQL("delete from hosts_table where host_name = "+"'"+txt+"'");
-                            shows();
-                        }
-                        else if(which == 0)
-                        {
-                            Intent intent = new Intent();
-                            intent.setClass(MainActivity.this,Conn.class);
-                            intent.putExtra("host_name",txt);
-                            startActivity(intent);
-                        }
-                        else
-                        {
-                            Toast.makeText(MainActivity.this, "别瞎几把点", Toast.LENGTH_LONG).show();
-                        }
-
-
-                    }
-                })
-                .show();
+                                if(which==1)
+                                {
+                                    Toast.makeText(MainActivity.this, "已删除"+txt, Toast.LENGTH_LONG).show();
+                                    db.execSQL("delete from hosts_table where host_name = "+"'"+txt+"'");
+                                    setOnListView();
+                                }
+                                else if(which == 0)
+                                {
+                                    Intent intent = new Intent();
+                                    intent.setClass(MainActivity.this,Conn.class);
+                                    intent.putExtra("host_name",txt);
+                                    startActivity(intent);
+                                }
+                                else
+                                {
+                                    Toast.makeText(MainActivity.this, "别瞎几把点", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
+                        .show();
             }
-
-
         });
-
-
-
-
-
     }
-
-
 }
