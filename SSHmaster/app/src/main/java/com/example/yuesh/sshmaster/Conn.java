@@ -3,8 +3,11 @@ package com.example.yuesh.sshmaster;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +30,7 @@ public class Conn extends AppCompatActivity {
     Button send;
     SQLiteDatabase db;
     Connection conn;
-    Session sess;
+    com.trilead.ssh2.Session sess;
     EditText editText;
     TextView textView;
     Cursor cursor;
@@ -45,6 +48,7 @@ public class Conn extends AppCompatActivity {
         db = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().toString()+"/my.db3",null);
         editText = (EditText) findViewById(R.id.tee_editText);
         textView = (TextView) findViewById(R.id.tee_textview);
+        textView.setMovementMethod(ScrollingMovementMethod.getInstance());
         send.setEnabled(false);
         cursor = db.rawQuery("select * from hosts_table where host_name =?",new String[]{host_name});
         if(cursor.moveToFirst())//Move the cursor to the first row. This method will return false if the cursor is empty.
@@ -59,43 +63,97 @@ public class Conn extends AppCompatActivity {
     }
     public void connect(View view) throws IOException {
 
-        if(connect.getText().toString()=="连接")
-        {
-            conn.connect();
-            Toast.makeText(Conn.this, ".connect执行完毕", Toast.LENGTH_LONG).show();
-            boolean isAuthenticated = conn.authenticateWithPassword(username, userpasswd);
-            if (isAuthenticated == false)
-                throw new IOException("Authentication failed.");
-
-            else
-            {
-                Toast.makeText(Conn.this, "keyi", Toast.LENGTH_LONG).show();
-                sess = conn.openSession();
-                connect.setText("断开");
-                textView.setText("已连接");
-                send.setEnabled(true);
-            }
-        }
-        else if(connect.getText().toString()=="断开")
-        {
-            sess.close();
-            conn.close();
-        }
-
+        Connect haha = new Connect();
+        haha.execute(host_name,username,userpasswd);
     }
     public void send (View view) throws IOException
     {
         String cmd = editText.getText().toString();
-        sess.execCommand(cmd);
-        InputStream stdout = new StreamGobbler(sess.getStdout());
-        BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
-        String line = "";
-        while (true)
-        {
-            line +=  br.readLine();
-            if (line == null)
-                break;
+        Session getresult = new Session();
+        getresult.execute(cmd);
+    }
+    public class Connect extends AsyncTask<String,Void,Integer>
+    {
+        @Override
+        protected void onPreExecute() {
+            Log.i("debug", "onPreExecute() called");
+            textView.setText("loading...");
         }
-        textView.setText(line);
+        protected Integer doInBackground(String... params) {
+            try {
+                return executeRemoteCommand(params[1], params[2], params[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Integer result) {
+            Log.i("debug", "onPostExecute(Result result) called");
+            if(result == 1) {
+                textView.setText("连接成功");
+                send.setEnabled(true);
+            }
+            else
+            {
+                textView.setText("连接未成功");
+            }
+        }
+        public Integer executeRemoteCommand(String username, String password, String hostname)
+                throws Exception {
+            conn.connect();
+            Log.i("debug", ".connect执行完成");
+            boolean isAuthenticated = conn.authenticateWithPassword(username, password);
+            if (isAuthenticated == false)
+                throw new IOException("Authentication failed.");
+            else
+            {
+                Log.i("debug", "连上了");
+                sess = conn.openSession();
+                return 1;
+            }
+        }
+    }
+    public class Session extends AsyncTask<String,Void,String>
+    {
+        @Override
+        protected void onPreExecute() {
+            Log.i("debug", "onPreExecute() called");
+            textView.setText("正在发送命令");
+        }
+        protected String doInBackground(String... params) {
+            try {
+                return executeRemoteCommand(params[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("debug", "onPostExecute(Result result) called");
+            textView.setText(result);
+        }
+        protected String executeRemoteCommand(String cmd) throws IOException {
+            sess.execCommand(cmd);
+            InputStream stdout = new StreamGobbler(sess.getStdout());
+            BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
+            StringBuilder stringBuilder = new StringBuilder("");
+            stringBuilder.append(username);
+            stringBuilder.append("@");
+            stringBuilder.append(host_name);
+            stringBuilder.append(":"+cmd+"\n");
+            while (true)
+            {
+                String line = br.readLine();
+                if (line == null)
+                    break;
+                Log.i("debug", line);
+                stringBuilder.append(line);
+                stringBuilder.append("  ");
+            }
+            String result = stringBuilder.toString();
+            return result;
+        }
     }
 }
