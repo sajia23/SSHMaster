@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
+    android:background="#2b2b2b"
+    android:minHeight="61dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="61dp"
+        android:layout_height="61dp"
+        >
 
-    <TextView
-        android:id="@+id/my_host_id"
-        android:textSize="20dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"/>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <ImageView
+            android:id="@+id/my_host_ic"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_laptop"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,13 +29,17 @@
         android:id="@+id/my_host_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20dp"/>
+        android:textColor="#ffffff"
+        android:text="qqqqq"
+        android:textSize="20dp" />
 
     <TextView
         android:id="@+id/my_host_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20dp"/>
+        android:textColor="#ffffff"
+        android:text="qqqqq"
+        android:textSize="20dp" />
 
 </LinearLayout>
 </LinearLayout>

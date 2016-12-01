@@ -62,9 +62,14 @@ public class Conn extends AppCompatActivity {
         Toast.makeText(Conn.this, userpasswd, Toast.LENGTH_LONG).show();
     }
     public void connect(View view) throws IOException {
-
-        Connect haha = new Connect();
-        haha.execute(host_name,username,userpasswd);
+        if(connect.getText().toString().equals("连接")) {
+            Connect haha = new Connect();
+            haha.execute(host_name, username, userpasswd);
+        }
+        else{
+            disconn haha = new disconn();
+            haha.execute();
+        }
     }
     public void send (View view) throws IOException
     {
@@ -93,6 +98,7 @@ public class Conn extends AppCompatActivity {
             if(result == 1) {
                 textView.setText("连接成功");
                 send.setEnabled(true);
+                connect.setText("断开");
             }
             else
             {
@@ -109,7 +115,7 @@ public class Conn extends AppCompatActivity {
             else
             {
                 Log.i("debug", "连上了");
-                sess = conn.openSession();
+
                 return 1;
             }
         }
@@ -135,6 +141,7 @@ public class Conn extends AppCompatActivity {
             textView.setText(result);
         }
         protected String executeRemoteCommand(String cmd) throws IOException {
+            sess = conn.openSession();
             sess.execCommand(cmd);
             InputStream stdout = new StreamGobbler(sess.getStdout());
             BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
@@ -150,10 +157,40 @@ public class Conn extends AppCompatActivity {
                     break;
                 Log.i("debug", line);
                 stringBuilder.append(line);
-                stringBuilder.append("  ");
+                stringBuilder.append("\n");
             }
             String result = stringBuilder.toString();
+            sess.close();
             return result;
+        }
+    }
+    public class disconn extends AsyncTask<Void,Void,Integer>
+    {
+        @Override
+        protected void onPreExecute() {
+            Log.i("debug", "disconn_onPreExecute() called");
+            textView.setText("正在断开");
+        }
+        @Override
+        protected Integer doInBackground(Void... params) {
+            try {
+                conn.close();
+
+                    return 1;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        protected void onPostExecute(Integer result) {
+            Log.i("debug", "disconn_onPostExecute(Result result) called");
+            if(result == 1) {
+                textView.setText("已断开");
+                send.setEnabled(false);
+            }
+            else
+                textView.setText("未断开");
         }
     }
 }

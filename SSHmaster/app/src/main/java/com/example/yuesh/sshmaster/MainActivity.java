@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new SimpleCursorAdapter(
                 MainActivity.this,
                 R.layout.listview_layout,
-                cursor,new String[] {"_id","host_name","host_username"},
-                new int[] {R.id.my_host_id,R.id.my_host_name,R.id.my_host_username},
+                cursor,new String[] {"host_name","host_username"},
+                new int[] {R.id.my_host_name,R.id.my_host_username},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
     }

@@ -23,6 +23,7 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".Conn"
             android:theme="@style/AppTheme"
+            android:label="主机交互"
             >
             <!--<intent-filter>-->
                 <!---->
