@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,32 +16,34 @@
     <ListView
         android:id="@+id/activity_main_ListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:background="#2b2b2b"
         android:padding="10dp"
         android:paddingTop="20dp">
 
     </ListView>
 
-    <Button
-        android:text="刷新"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="56dp"
-        android:onClick="show"
-        android:id="@+id/activity_main_button2"
-        android:layout_above="@+id/activity_main_button1"
-        android:layout_alignStart="@+id/activity_main_button1" />
-
-    <Button
-        android:text="创建"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/activity_main_button1"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#3f51b5"
         android:onClick="open"
-        android:layout_marginBottom="27dp"
+        android:layout_marginEnd="40dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="99dp" />
+        android:layout_marginBottom="29dp" />
 
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_reload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_reload"
+        app:backgroundTint="#3f51b5"
+        android:onClick="show"
+        android:layout_alignTop="@+id/fab_add"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="38dp" />
 </RelativeLayout>

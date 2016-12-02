@@ -28,22 +28,24 @@ public class Add extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         db = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().toString()+"/my.db3",null);
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.activity_add, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_add, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+            case R.id.action_save:
+                save();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-    public void save(View view)
+    public void save()
     {
         String host_name = ((EditText)findViewById( R.id.editText_hostname)).getText().toString();
         for (long i = 0; i < n; i++)

@@ -55,11 +55,8 @@ public class Conn extends AppCompatActivity {
         {
             username=cursor.getString(3);
             userpasswd=cursor.getString(4);
-
         }
         cursor.close();
-        Toast.makeText(Conn.this, username, Toast.LENGTH_LONG).show();
-        Toast.makeText(Conn.this, userpasswd, Toast.LENGTH_LONG).show();
     }
     public void connect(View view) throws IOException {
         if(connect.getText().toString().equals("连接")) {
