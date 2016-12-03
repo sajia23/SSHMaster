@@ -52,7 +52,7 @@ public class Add extends AppCompatActivity {
         {
             if (host_name == null || host_name.length() <= 0)
             {
-                Toast.makeText(this, "别瞎几把填", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "请填写正确的主机信息", Toast.LENGTH_LONG).show();
                 return;
             }
         }
